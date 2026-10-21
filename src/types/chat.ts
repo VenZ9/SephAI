@@ -1,4 +1,4 @@
-export type MessageRole = 'user' | 'assistant' | 'system';
+export type MessageRole = 'system' | 'user' | 'assistant';
 
 export interface ChatMessage {
   id: string;
@@ -43,74 +43,86 @@ export interface ModelOption {
   tag?: string;
 }
 
+export interface PendingAuthAction {
+  type: 'send_message' | 'regenerate';
+  conversationId: string;
+  messageText?: string;
+  model: string;
+  timestamp: number;
+}
+
+/**
+ * Curated list of verified, actively supported models on Puter AI.
+ * Sourced directly from Puter.js models registry.
+ */
 export const POPULAR_MODELS: ModelOption[] = [
-  {
-    id: 'claude-3-7-sonnet',
-    name: 'Claude 3.7 Sonnet',
-    description: 'Hybrid reasoning and high-level coding intelligence',
-    provider: 'Anthropic',
-    isPopular: true,
-    tag: 'Flagship'
-  },
-  {
-    id: 'claude-3-5-sonnet',
-    name: 'Claude 3.5 Sonnet',
-    description: 'Anthropic flagship model for reasoning and coding',
-    provider: 'Anthropic',
-    isPopular: true,
-    tag: 'Recommended'
-  },
-  {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
-    description: 'OpenAI high-intelligence multimodal flagship',
-    provider: 'OpenAI',
-    isPopular: true,
-    tag: 'Fast'
-  },
   {
     id: 'gpt-4o-mini',
     name: 'GPT-4o Mini',
     description: 'Fast, lightweight and cost-effective OpenAI model',
     provider: 'OpenAI',
     isPopular: true,
-    tag: 'Economical'
+    tag: 'Recommended'
   },
   {
-    id: 'deepseek-chat',
-    name: 'DeepSeek Chat (V3)',
-    description: 'Open and powerful model from DeepSeek',
+    id: 'gpt-4o',
+    name: 'GPT-4o',
+    description: 'OpenAI flagship multimodal intelligence',
+    provider: 'OpenAI',
+    isPopular: true,
+    tag: 'Flagship'
+  },
+  {
+    id: 'claude-sonnet-4-6',
+    name: 'Claude Sonnet 4.6',
+    description: 'Anthropic flagship reasoning and high-level coding intelligence',
+    provider: 'Anthropic',
+    isPopular: true,
+    tag: 'Intelligence'
+  },
+  {
+    id: 'claude-haiku-4-5-20251001',
+    name: 'Claude Haiku 4.5',
+    description: 'Fast Anthropic model for snappy, high-volume tasks',
+    provider: 'Anthropic',
+    isPopular: true,
+    tag: 'Snappy'
+  },
+  {
+    id: 'deepseek-flash',
+    name: 'DeepSeek V4.1 Flash',
+    description: 'High-speed reasoning and synthesis from DeepSeek',
     provider: 'DeepSeek',
     isPopular: true,
-    tag: 'Popular'
+    tag: 'Fast'
   },
   {
-    id: 'deepseek-reasoner',
-    name: 'DeepSeek R1',
-    description: 'Advanced deep chain-of-thought reasoning model',
+    id: 'deepseek-v4-pro',
+    name: 'DeepSeek V4 Pro',
+    description: 'Deep chain-of-thought advanced reasoning model',
     provider: 'DeepSeek',
     isPopular: true,
     tag: 'Reasoning'
   },
   {
-    id: 'gemini-2.0-flash',
-    name: 'Gemini 2.0 Flash',
-    description: 'Google ultra-fast next-gen multimodal model',
+    id: 'gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash',
+    description: 'Google ultra-fast multimodal model',
     provider: 'Google',
     isPopular: true,
     tag: 'Fastest'
   },
   {
-    id: 'mistral-large-latest',
-    name: 'Mistral Large',
-    description: 'Top-tier reasoning and multilingual capacity',
+    id: 'mistral-small-2603',
+    name: 'Mistral Small',
+    description: 'Efficient, multilingual reasoning and logic',
     provider: 'Mistral',
     isPopular: false
   }
 ];
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  defaultModel: 'claude-3-5-sonnet',
+  defaultModel: 'gpt-4o-mini',
   systemPrompt: 'You are Seph AI, a helpful, precise, and thoughtful AI assistant. Give clear, well-structured, and concise answers using clean markdown formatting.',
   temperature: 0.7,
   streamResponse: true,

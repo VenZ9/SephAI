@@ -1,9 +1,10 @@
-import { Conversation, AppSettings, DEFAULT_SETTINGS } from '../types/chat';
+import { Conversation, AppSettings, DEFAULT_SETTINGS, PendingAuthAction } from '../types/chat';
 
 const STORAGE_KEYS = {
   CONVERSATIONS: 'seph_ai_conversations',
   ACTIVE_CONVERSATION_ID: 'seph_ai_active_id',
   SETTINGS: 'seph_ai_settings',
+  PENDING_AUTH_ACTION: 'seph_pending_auth_action',
 };
 
 /**
@@ -95,5 +96,47 @@ export function clearAllConversations(): void {
     localStorage.removeItem(STORAGE_KEYS.ACTIVE_CONVERSATION_ID);
   } catch (err) {
     console.error('Failed to clear conversations:', err);
+  }
+}
+
+/**
+ * Stores a pending action (e.g. sending a message) to be resumed after authentication.
+ */
+export function savePendingAuthAction(action: PendingAuthAction): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.PENDING_AUTH_ACTION, JSON.stringify(action));
+  } catch (err) {
+    console.error('Failed to save pending auth action:', err);
+  }
+}
+
+/**
+ * Retrieves the pending auth action if one exists and is not expired (TTL: 15 mins).
+ */
+export function loadPendingAuthAction(): PendingAuthAction | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.PENDING_AUTH_ACTION);
+    if (!raw) return null;
+    const action = JSON.parse(raw) as PendingAuthAction;
+    // Check expiration (15 minutes)
+    if (Date.now() - action.timestamp > 15 * 60 * 1000) {
+      clearPendingAuthAction();
+      return null;
+    }
+    return action;
+  } catch (err) {
+    console.error('Failed to load pending auth action:', err);
+    return null;
+  }
+}
+
+/**
+ * Clears the pending auth action from storage to avoid duplicate submissions or loops.
+ */
+export function clearPendingAuthAction(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.PENDING_AUTH_ACTION);
+  } catch (err) {
+    console.error('Failed to clear pending auth action:', err);
   }
 }
